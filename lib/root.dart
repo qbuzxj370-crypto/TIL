@@ -1,0 +1,102 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
+import 'src/common/controller/bottom_nav_controller.dart';
+
+class Root extends GetView<BottomNavController> {
+  const Root({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(color: Colors.red),
+      bottomNavigationBar: Obx(
+        () => BottomNavigationBar(
+            currentIndex: 0,
+            type: BottomNavigationBarType.fixed,
+            backgroundColor: const Color(0xff212123),
+            selectedItemColor: const Color(0xffff6f61),
+            unselectedItemColor: const Color(0xff9e9e9e),
+            selectedFontSize: 11,
+            onTap: (int pageIndex) {},
+            items: [
+              BottomNavigationBarItem(
+                label: '홈',
+                icon: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SvgPicture.asset(
+                    'assets/svg/icons/home-off.svg',
+                  ),
+                ),
+                activeIcon: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SvgPicture.asset(
+                    'assets/svg/icons/home-on.svg',
+                  ),
+                ),
+              ),
+              BottomNavigationBarItem(
+                label: '동네 생활',
+                icon: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SvgPicture.asset(
+                    'assets/svg/icons/arround_life-off.svg',
+                  ),
+                ),
+                activeIcon: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SvgPicture.asset(
+                    'assets/svg/icons/arround_life-on.svg',
+                  ),
+                ),
+              ),
+              BottomNavigationBarItem(
+                label: '내 근처',
+                icon: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SvgPicture.asset(
+                    'assets/svg/icons/near-off.svg',
+                  ),
+                ),
+                activeIcon: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SvgPicture.asset(
+                    'assets/svg/icons/near-on.svg',
+                  ),
+                ),
+              ),
+              BottomNavigationBarItem(
+                label: '채팅',
+                icon: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SvgPicture.asset(
+                    'assets/svg/icons/chat-off.svg',
+                  ),
+                ),
+                activeIcon: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SvgPicture.asset(
+                    'assets/svg/icons/chat-on.svg',
+                  ),
+                ),
+              ),
+              BottomNavigationBarItem(
+                label: '나의 밤톨',
+                icon: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SvgPicture.asset(
+                    'assets/svg/icons/my-off.svg',
+                  ),
+                ),
+                activeIcon: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SvgPicture.asset(
+                    'assets/svg/icons/my-on.svg',
+                  ),
+                ),
+              ),
+            ]),
+      ),
+    );
+  }
+}
