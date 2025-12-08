@@ -1,5 +1,7 @@
 import 'package:clone_project/src/common/components/app_font.dart';
 import 'package:clone_project/src/common/components/btn.dart';
+import 'package:clone_project/src/common/controller/authentication_controller.dart';
+import 'package:clone_project/src/common/enum/authentication_status.dart';
 import 'package:clone_project/src/user/login/controller/login_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -103,16 +105,24 @@ class LoginPage extends GetView<LoginController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          _logoView(),
-          _textDivier(),
-          _snsLoginBtn(),
-        ],
-      ),
-    );
+    return Obx(() {
+      final status = Get.find<AuthenticationController>().status.value;
+      if (status == AuthenticationStatus.authentication) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          Get.offNamed('/home');
+        });
+      }
+      return Scaffold(
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _logoView(),
+            _textDivier(),
+            _snsLoginBtn(),
+          ],
+        ),
+      );
+    });
   }
 }

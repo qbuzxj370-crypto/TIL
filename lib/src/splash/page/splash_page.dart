@@ -13,50 +13,59 @@ class SplashPage extends GetView<SplashController> {
 
   @override
   Widget build(BuildContext context) {
+    final authCtrl = Get.find<AuthenticationController>();
+    final dataCtrl = Get.find<DataLoadController>();
+
     return Scaffold(
       body: Center(
         child: GetxListener<AuthenticationStatus>(
-          listen: (AuthenticationStatus status) async {
+          stream: authCtrl.status,
+          listen: (AuthenticationStatus status) {
             switch (status) {
               case AuthenticationStatus.authentication:
                 Get.offNamed('/home');
                 break;
               case AuthenticationStatus.unAuthenticated:
-                var userModel = Get.find<AuthenticationController>().userModel.value;
-                await Get.offNamed('/signup/${userModel.uid}');
+                final user = authCtrl.userModel.value;
+                if (user.uid == null) {
+                  Get.offNamed('/login');
+                } else {
+                  Get.offNamed('/signup/${user.uid}');
+                  authCtrl.reload();
+                }
                 break;
               case AuthenticationStatus.unknown:
                 Get.offNamed('/login');
                 break;
               case AuthenticationStatus.init:
+                // 초기 상태에서는 아무 동작 없음
                 break;
             }
           },
-          stream: Get.find<AuthenticationController>().status,
           child: GetxListener<bool>(
-            listen: (bool value) {
-              if (value) {
+            stream: dataCtrl.isDataLoad,
+            listen: (bool loaded) {
+              if (loaded) {
                 controller.loadStep(StepType.authCheck);
               }
             },
-            stream: Get.find<DataLoadController>().isDataLoad,
             child: GetxListener<StepType>(
+              stream: controller.loadStep,
               initCall: () {
                 controller.loadStep(StepType.dataLoad);
               },
-              listen: (StepType? value) {
-                if (value == null) return;
-                switch (value) {
+              listen: (StepType? step) {
+                if (step == null) return;
+                switch (step) {
                   case StepType.init:
                   case StepType.dataLoad:
-                    Get.find<DataLoadController>().loadData();
+                    dataCtrl.loadData();
                     break;
                   case StepType.authCheck:
-                    Get.find<AuthenticationController>().authCheck();
+                    authCtrl.authCheck();
                     break;
                 }
               },
-              stream: controller.loadStep,
               child: const _SplashView(),
             ),
           ),
@@ -81,9 +90,7 @@ class _SplashView extends GetView<SplashController> {
               SizedBox(
                 width: 99,
                 height: 116,
-                child: Image.asset(
-                  'assets/images/logo_simbol.png',
-                ),
+                child: Image.asset('assets/images/logo_simbol.png'),
               ),
               const SizedBox(height: 40),
               const AppFont(
@@ -93,11 +100,11 @@ class _SplashView extends GetView<SplashController> {
               ),
               const SizedBox(height: 15),
               AppFont(
-                '중고 거래부터 동네 정보까지, \n지금 내 동네를 선택하고 시작해보세요!',
+                '중고 거래부터 동네 정보까지,\n지금 내 동네를 선택하고 시작해보세요!',
                 align: TextAlign.center,
                 size: 18,
                 color: Colors.white.withValues(alpha: 0.6),
-              )
+              ),
             ],
           ),
         ),
@@ -105,20 +112,20 @@ class _SplashView extends GetView<SplashController> {
           height: 200,
           child: Column(
             children: [
-              Obx(
-                () {
-                  return Text(
-                    '${controller.loadStep.value.name}중 입니다.',
-                    style: const TextStyle(color: Colors.white),
-                  );
-                },
-              ),
+              Obx(() {
+                return Text(
+                  '${controller.loadStep.value.name} 중 입니다.',
+                  style: const TextStyle(color: Colors.white),
+                );
+              }),
               const SizedBox(height: 20),
               const CircularProgressIndicator(
-                  strokeWidth: 1, color: Colors.white)
+                strokeWidth: 1,
+                color: Colors.white,
+              ),
             ],
           ),
-        )
+        ),
       ],
     );
   }

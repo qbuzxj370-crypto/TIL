@@ -1,10 +1,7 @@
-import 'package:clone_project/src/app.dart';
 import 'package:clone_project/main.dart';
 import 'package:clone_project/src/init/page/init_start_page.dart';
 import 'package:clone_project/src/splash/page/splash_page.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class App extends StatefulWidget {
   const App({super.key});

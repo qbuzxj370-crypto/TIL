@@ -15,21 +15,29 @@ class GetxListener<T> extends StatefulWidget {
   });
 
   @override
-  State<GetxListener> createState() {
-    stream.listen(listen);
-    return _GetxListenerState();
-  }
+  State<GetxListener<T>> createState() => _GetxListenerState<T>();
 }
 
-class _GetxListenerState extends State<GetxListener> {
+class _GetxListenerState<T> extends State<GetxListener<T>> {
+  late final Worker _worker; 
+  
   @override
   void initState() {
-    super.initState();
+    super.initState();   
+    
+    _worker = ever<T>(widget.stream, widget.listen);
 
     if (widget.initCall != null) {
       widget.initCall!();
     }
   }
+
+  @override
+  void dispose() {
+    _worker.dispose();
+    super.dispose();
+  }
+
 
   @override
   Widget build(BuildContext context) {

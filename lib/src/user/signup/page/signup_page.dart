@@ -1,5 +1,5 @@
-import 'package:clone_project/src/common/components/btn.dart';
 import 'package:clone_project/src/common/components/app_font.dart';
+import 'package:clone_project/src/common/components/btn.dart';
 import 'package:clone_project/src/user/signup/controller/signup_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -22,8 +22,8 @@ class SignupPage extends GetWidget<SignupController> {
               child: Image.asset('assets/images/logo_simbol.png'),
             ),
             const SizedBox(height: 35),
-            Obx(() =>
-              TextField(
+            Obx(
+              () => TextField(
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                   hintText: '닉네임',
@@ -32,21 +32,20 @@ class SignupPage extends GetWidget<SignupController> {
                       : '이미 존재하는 닉네임입니다.',
                   hintStyle: const TextStyle(color: Color(0xff6D7179)),
                   focusedBorder: const UnderlineInputBorder(
-                    borderSide: BorderSide(color: Color(0xff6D7179))),
+                      borderSide: BorderSide(color: Color(0xff6D7179))),
                   enabledBorder: const UnderlineInputBorder(
-                    borderSide: BorderSide(color: Color(0xff6D7179))),
+                      borderSide: BorderSide(color: Color(0xff6D7179))),
                 ),
                 onChanged: controller.changeNickName,
               ),
             ),
-          ]          
+          ],
         ),
       ),
-
       bottomNavigationBar: Padding(
         padding: EdgeInsets.symmetric(
-          horizontal: 25,
-          vertical: 20 + MediaQuery.of(context).viewInsets.bottom),
+            horizontal: 25,
+            vertical: 20 + MediaQuery.of(context).padding.bottom),
         child: Obx(
           () => Btn(
             onTap: () async {

@@ -1,5 +1,5 @@
-import 'package:clone_project/src/user/repository/user_repository.dart';
 import 'package:clone_project/src/user/model/user_model.dart';
+import 'package:clone_project/src/user/repository/user_repository.dart';
 import 'package:get/get.dart';
 
 class SignupController extends GetxController {
@@ -13,19 +13,19 @@ class SignupController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    debounce(userNickName, checkDuplicationNickName, time: const Duration(milliseconds: 500));
+    debounce(userNickName, checkDuplicationNickName,
+        time: const Duration(milliseconds: 500));
   }
 
   checkDuplicationNickName(String value) async {
-    var isPossibleUse = await _userRepository.checkDuplicationNickName(userNickName.value);
+    var isPossibleUse = await _userRepository.checkDuplicationNickName(value);
     isPossibleUseNickName(isPossibleUse);
   }
 
-  changeNickName(String nickname) {
-    userNickName(nickname);
+  changeNickName(String nickName) {
+    userNickName(nickName);
   }
 
-  
   Future<String?> signup() async {
     var newUser = UserModel.create(userNickName.value, uid);
     var result = await _userRepository.signup(newUser);
