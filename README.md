@@ -1,18 +1,104 @@
-# clone_project
+# 당근마켓 클론 앱 – Chapter 13 ~ 14 정리
 
-A new Flutter project.
+## 1. 이 구간의 역할
 
-## Getting Started
+Chapter 13 ~ 14는  
+이미 구축된 **인증/기본 구조(08~12장)** 위에
 
-This project is a starting point for a Flutter application.
+- 실제 서비스를 닮은 **앱 뼈대(루트 레이아웃)**
+- 그리고 사용자에게 보이는 **홈 화면 UI**
 
-A few resources to get you started if this is your first Flutter project:
+를 완성하는 단계입니다.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+---
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 2. 선행 챕터(08~12) 간단 정리
 
-flutter_map 3.x에서 flutter_map 4.x로 업데이트 되며 사용하지 못하는 속성/메서드 수정
+- Firebase 연동 및 앱 초기화
+- SharedPreferences 도입
+- 스플래시 → 로그인/홈 분기 흐름
+- Firebase Auth 기반 회원가입/로그인
+
+이제 로그인 이후에 보여줄 **실제 메인 앱(탭 구조 + 홈 화면)** 을 꾸미는 작업이 13~14장입니다.
+
+---
+
+## 3. Chapter 13 – 앱 Root 레이아웃 구성
+
+**주요 추가 기능**
+
+1. **Root 페이지 구현**
+   - 로그인 이후 진입하는 메인 페이지(예: `Root`, `MainPage`)를 추가
+   - 앱의 전체 레이아웃(상단 AppBar, 중앙 Body, 하단 네비게이션)을 담당
+
+2. **BottomNavigationBar 도입**
+   - 홈, 채팅, 마이페이지 등 여러 탭을 가지는 하단 바 구현
+   - 각 탭 인덱스를 GetX 컨트롤러(예: `BottomNavController`)로 관리
+
+3. **탭별 페이지 연결**
+   - 예시:
+     - index 0 → `HomePage`
+     - index 1 → `ChatListPage`
+     - index 2 → `MyPage`
+   - `Obx`를 사용하여 현재 선택된 탭에 맞는 페이지를 Body에 표시
+
+4. **폴더 구조 정리**
+   - `src` 아래에 도메인별 폴더 분리
+     - `home/`, `chat/`, `user/` 등
+   - 각 도메인에 `page`, `controller`, `repository` 파일들이 위치
+
+**이전 챕터 대비 의미**
+
+- 기존에는 “현재 화면”만 신경 썼다면,  
+  이제는 **앱 전체를 관통하는 프레임(탭 구조)** 를 만들었다는 점에서 큰 변화
+- 이후 기능(홈, 채팅, 마이페이지 등)이  
+  모두 이 Root 레이아웃 안으로 들어가는 구조가 됨
+
+---
+
+## 4. Chapter 14 – 홈 화면 UI 구성
+
+**주요 추가 기능**
+
+1. **홈 화면 레이아웃 완성**
+   - 상단:
+     - 동네 이름, 검색 아이콘, 알림 아이콘, 메뉴 아이콘 등
+   - 중간:
+     - 상품 목록이 들어갈 리스트 영역
+   - 하단(또는 오른쪽 하단):
+     - **상품 등록 Floating Action Button** 또는 유사한 동작 버튼
+
+2. **상품 카드 UI**
+   - 각 상품에 대해
+     - 썸네일 이미지
+     - 제목
+     - 가격
+     - 위치/시간 등의 텍스트
+   - 리스트 형태로 스크롤 가능하게 배치
+
+3. **UI 컴포넌트 분리**
+   - 긴 `build()` 메서드 안에서 모든 코드를 작성하는 대신
+   - 홈 화면 내부에서만 사용하는 **작은 위젯들**(예: `ProductItem`, `HomeHeader`)로 분리
+   - 재사용성과 가독성을 높임
+
+4. **향후 기능 연계를 고려한 구조**
+   - 상품 카드를 탭했을 때 상품 상세 페이지로 이동할 수 있도록
+     onTap 핸들러와 라우트 준비
+   - 아직은 더미 데이터 또는 간단한 목록일 수 있지만,
+     다음 챕터에서 Firebase 데이터를 얹기 쉬운 구조로 설계
+
+**이전 챕터 대비 의미**
+
+- 13장에서 만든 **루트 탭 구조** 안에  
+  14장에서 실제 **당근마켓과 유사한 홈 UI**를 채워 넣음
+- 이로써 “앱처럼 보이는 상태”가 제대로 갖춰지기 시작
+
+---
+
+## 5. 학습/발전 포인트
+
+- **전체 앱 레이아웃 설계**: Root 페이지 + BottomNavigationBar
+- **도메인별 코드 분리**: `home`, `chat`, `user` 등 기능별 구조화
+- **UI를 기능 확장 가능한 형태로 만들기**:
+  - 임시 더미 데이터로 UI를 먼저 완성하고,
+  - 다음 단계에서 실제 Firebase 데이터를 얹을 수 있는 구조 설계
