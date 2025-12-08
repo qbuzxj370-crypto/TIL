@@ -1,16 +1,129 @@
-# clone_project
+# 당근마켓 클론 앱 – Chapter 17 정리
+## 1. 이 챕터의 역할
 
-A new Flutter project.
+Chapter 17은  
+이미 15~16장에서 구현한 **상품 등록 기능**을 바탕으로,
 
-## Getting Started
+> “등록된 상품을 홈 화면에서  
+>  **리스트로 불러와 출력하는 기능**”
 
-This project is a starting point for a Flutter application.
+을 구현하는 단계입니다.  
+즉, “쓰기(등록)”가 끝났으니, 이제 “읽기(조회)”를 완성합니다.
 
-A few resources to get you started if this is your first Flutter project:
+---
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## 2. 선행 흐름 요약 (맥락)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- 13~14장: Root 레이아웃 + 홈 UI 틀 제작
+- 15~16장: 상품 등록 페이지(입력/검증/저장) 완성  
+  → Firestore에 실제 상품 데이터가 쌓이기 시작
+
+이 상태에서 17장은 **홈 화면과 Firestore를 연결**합니다.
+
+---
+
+## 3. Chapter 17 – 홈 화면 상품 리스트 & 페이징
+
+### 3.1 Home 전용 컨트롤러 도입
+
+**추가 내용**
+
+- `HomeController` (또는 유사한 이름)
+  - Firebase(예: Firestore)의 `products` 컬렉션에서 상품 목록을 조회
+  - 상품 리스트 상태, 로딩 상태, 마지막 문서 커서 등을 관리
+- GetX DI를 활용해
+  - 홈 화면 진입 시 `HomeController`를 주입하고
+  - `Obx`로 상태 변화를 감시해 UI를 갱신
+
+**의미**
+
+- 상품 데이터에 대한 **중앙 집중식 상태관리**가 도입됨
+- 여러 위젯에서 동일한 상품 리스트를 공유할 수 있는 기반
+
+---
+
+### 3.2 Firestore 연동 및 페이지네이션
+
+**주요 구현 내용**
+
+1. **처음 불러오기**
+   - 앱 시작 또는 홈 진입 시 Firestore에서
+     지정한 개수(예: 7개)의 상품만 가져옴 (`limit` 사용)
+
+2. **커서 기반 페이지네이션**
+   - 첫 쿼리의 마지막 문서를 `lastDocument`로 저장
+   - 이후 “더 불러오기” 시
+     - `startAfterDocument(lastDocument).limit(7)` 형태로 다음 페이지 요청
+   - 더 이상 가져올 데이터가 없으면 추가 호출 방지
+
+3. **스크롤 이벤트와 연동**
+   - 리스트 스크롤이 끝에 가까워지면 추가 로드 실행
+   - 무한 스크롤에 가까운 UX 제공
+
+**이전까지와의 차이**
+
+- 단순히 전체 목록을 한 번에 가져오던 수준을 넘어서  
+  **대용량 데이터까지 고려한 리스트 로딩 구조**를 연습
+
+---
+
+### 3.3 상품 리스트 UI와 상태 연결
+
+**추가/변경 내용**
+
+- 홈 화면의 상품 목록 영역을
+  - `Obx(() => ListView.builder(...))` 형태로 변경
+  - `HomeController.products` 상태에 따라 리스트를 그림
+- 예외 케이스 처리
+  - 로딩 중 → 로딩 위젯 표시
+  - 데이터 없음 → “등록된 상품이 없습니다” 메시지 표시
+  - 오류 발생 시 → 에러 메시지 혹은 재시도 버튼 표시
+
+**의미**
+
+- 14장에서 만든 “UI 틀”이
+  이제 **실제 데이터와 연결**되어 동작하게 됨
+
+---
+
+### 3.4 성능 및 UX 개선 요소
+
+**대표적인 개선 포인트**
+
+1. **이미지 캐싱**
+   - 상품 이미지에 캐싱 라이브러리(예: `cached_network_image`) 도입
+   - 스크롤 시 이미지 재로딩을 최소화하여 성능 개선
+
+2. **추가 로드 중 상태 표시**
+   - 하단에 “더 불러오는 중…”과 같은 인디케이터 표시
+   - 사용자가 로딩 상태를 인지할 수 있도록 피드백 제공
+
+3. **새로 등록한 상품 반영**
+   - 상품 등록 후 홈으로 돌아왔을 때
+     - HomeController에서 리스트를 다시 로드하거나
+     - 등록 직후 리스트 상단에 새 상품을 삽입하는 방식으로 반영
+
+---
+
+## 4. 챕터 17의 의의
+
+- **15~16장의 상품 등록 기능**과  
+  **17장의 상품 조회(목록) 기능**이 합쳐지면서,
+
+> 사용자는 앱 안에서  
+> “상품을 올리고, 그 상품을 홈에서 확인하는”  
+> 기본적인 사용자 경험 전체를 수행할 수 있게 됨.
+
+- 또한, Firestore를 이용한
+  - **커서 기반 페이지네이션**
+  - **리스트 + 상태관리 + 캐싱** 조합을 실습할 수 있는 중요한 단계
+
+---
+
+## 5. 학습/발전 포인트
+
+- Firestore의 `limit`, `startAfterDocument`를 활용한 페이지네이션 패턴 이해
+- GetX를 통한 **리스트 상태 관리** 및 UI 연동
+- 스크롤 이벤트와 데이터 로딩을 연결하는 실전 패턴
+- 실제 서비스 앱에서 필수적인
+  **“등록(Write) ↔ 조회(Read)” 플로우 완성 경험**
