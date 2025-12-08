@@ -1,16 +1,103 @@
-# clone_project
+# 당근마켓 클론 앱 – Chapter 15 ~ 16 정리
+## 1. 이 구간의 역할
 
-A new Flutter project.
+Chapter 15 ~ 16은  
+**“상품을 등록할 수 있는 기능”** 을 만드는 구간입니다.
 
-## Getting Started
+- 15장: 상품 등록 화면(UI, 상태관리) 설계
+- 16장: 유효성 검증 + 실제 저장(제출) 로직 완성
 
-This project is a starting point for a Flutter application.
+---
 
-A few resources to get you started if this is your first Flutter project:
+## 2. 사전 단계 요약 (13~14장)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- Root 레이아웃 (탭 구조) 완성
+- 홈 화면 UI 구성 (상품 목록이 들어갈 자리 준비)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+즉, **“상품이 보여질 자리”** 는 만들어 둔 상태이고,  
+15~16장에서 **“상품을 생성(등록)”** 하는 기능을 붙입니다.
+
+---
+
+## 3. Chapter 15 – 상품 등록 페이지 (1차: UI & 상태)
+
+**주요 추가 기능**
+
+1. **상품 등록 페이지 추가**
+   - 새로운 라우트 (예: `/product/write`) 및 페이지 위젯 생성
+   - 홈 화면의 플로팅 버튼 등에서 이동할 수 있도록 라우팅 연결
+
+2. **입력 폼 구성**
+   - 제목(TextField)
+   - 가격(TextField)
+   - 카테고리 선택 (Dropdown 등)
+   - 상세 설명(TextField / TextFormField)
+   - 가격 제안 여부 체크박스
+   - 거래 희망 장소 영역 (지도 연동 예정 위치)
+
+3. **이미지 선택 UI 구현**
+   - 여러 장의 상품 이미지를 선택할 수 있는 **이미지 선택 컴포넌트** 추가
+   - 갤러리에서 사진 선택 후 리스트/그리드 형태로 미리보기
+
+4. **공통 컴포넌트 활용**
+   - 공통 버튼 위젯(예: 주황색 App 버튼)
+   - 공통 로딩 위젯 등
+   - `lib/src/common/components` 에 공통 UI를 모아 관리
+
+5. **상태 관리 컨트롤러 도입**
+   - 상품 등록 전용 컨트롤러(예: `ProductWriteController`) 생성
+   - 선택된 이미지, 제목, 가격, 설명 등 폼 상태를 이 컨트롤러에서 관리
+
+**이전 챕터 대비 의미**
+
+- 홈 화면에만 있던 “보여주는 UI”에서  
+  **실제 데이터를 입력받는 화면**이 새로 생김
+- 다음 단계(16장)의 검증 및 저장 로직을 위한 기반을 모두 준비
+
+---
+
+## 4. Chapter 16 – 상품 등록 페이지 (2차: 검증 & 저장)
+
+**주요 추가 기능**
+
+1. **입력값 유효성 검사**
+   - 필수 항목(예: 최소 1장의 사진, 제목, 가격 등)을 모두 채워야만
+     “완료” 버튼이 활성화되도록 구현
+   - GetX의 반응형 변수(예: `isValid`)를 사용해 실시간 체크
+
+2. **버튼 활성/비활성 제어**
+   - `IgnorePointer` + Opacity 등을 활용하여
+     - 조건 충족 전: 클릭 불가 + 흐린 UI
+     - 조건 충족 후: 클릭 가능 + 정상 UI
+   - 분기 로직을 위젯 계층에서 처리해 코드 단순화
+
+3. **Firebase 저장 로직 구현**
+   - `submit()` 함수에서
+     - 선택된 이미지 Firebase Storage 업로드
+     - 업로드된 이미지 URL + 입력값을 Firestore에 저장
+   - 로그인한 사용자 UID와 함께 저장해
+     “어떤 사용자가 올린 상품인지” 추적 가능
+
+4. **등록 후 네비게이션 & 피드백**
+   - 등록 성공 후
+     - 홈 화면 또는 상품 상세 화면으로 이동
+     - 스낵바/다이얼로그 등으로 성공 메시지 표시
+   - 실패 시
+     - 에러 메시지 출력
+     - 로딩 상태 해제
+
+**이전 챕터 대비 의미**
+
+- 15장에서 “폼 있는 페이지”였던 것을  
+  16장에서 **실제 동작하는 상품 등록 기능**으로 완성
+- 앱이 단순 읽기용이 아니라  
+  **사용자가 데이터를 생성하는 서비스**로 발전
+
+---
+
+## 5. 학습/발전 포인트
+
+- 복잡한 폼 화면(이미지 + 텍스트 + 체크박스 등) 설계
+- GetX를 활용한 **폼 상태관리 + 유효성 검사**
+- Firebase Storage + Firestore 연동을 통한 **실제 데이터 쓰기(write)** 경험
+- 등록 흐름에서의 UX (로딩, 에러, 성공 피드백) 설계
