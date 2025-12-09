@@ -1,16 +1,175 @@
-# clone_project
+# 당근마켓 클론 앱 – Chapter 18 정리
+## 1. 챕터 개요
 
-A new Flutter project.
+Chapter 18은 홈 화면에서 표시된 상품 목록 중  
+하나의 상품을 선택했을 때 **해당 상품의 상세 정보를 확인할 수 있는 화면**을 구현하는 단계이다.
 
-## Getting Started
+이전 챕터들과의 흐름은 다음과 같다.
 
-This project is a starting point for a Flutter application.
+- Chapter 15~16: 상품 등록 기능 구현
+- Chapter 17: 상품 목록 조회 및 리스트 화면 구현
+- Chapter 18: 개별 상품 상세 조회 화면 구현
 
-A few resources to get you started if this is your first Flutter project:
+즉, 이 단계에서는 상품 데이터를 한 건 단위로 조회하고  
+사용자가 거래를 판단할 수 있도록 **정보 밀도가 높은 화면**을 구성한다.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+---
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 2. 이전 챕터(17)와의 연결 구조
+
+Chapter 17까지 가능한 동작은 다음과 같다.
+
+- Firebase에서 상품 목록을 불러와 홈 화면에 리스트로 출력
+- 각 상품은 이미지 1장, 제목, 가격 등 요약 정보만 제공
+
+Chapter 18에서는 다음 기능이 추가된다.
+
+- 특정 상품을 선택해 상세 화면으로 이동
+- 해당 상품의 모든 정보(이미지, 설명, 등록 정보)를 한 화면에 표시
+
+이를 통해 리스트 화면과 상세 화면의 역할이 명확히 분리된다.
+
+---
+
+## 3. 상품 상세 페이지 구현 내용
+
+### 3.1 상품 상세 페이지 라우트 추가
+
+**추가된 내용**
+
+- 상품 상세 페이지 전용 라우트 생성
+- 예시 형태  
+  `/product/detail/:productId`
+- 홈 화면의 상품 카드 클릭 시  
+  상품 ID를 전달하여 상세 페이지로 이동
+
+**의미**
+
+- 리스트 → 상세 화면으로 이어지는 일반적인 앱 구조 완성
+- 라우트 파라미터를 활용한 동적 화면 구성 방식 학습
+
+---
+
+### 3.2 ProductDetailController 추가
+
+**구조 구성**
+
+- 상품 상세 전용 컨트롤러 생성
+- 전달받은 `productId`를 기반으로 Firebase Firestore에서 단일 상품 조회
+- 조회한 데이터를 상태로 관리
+
+**컨트롤러 역할**
+
+- Firestore의 products 컬렉션에서 해당 상품 문서 조회
+- 다음 항목들을 상태로 관리
+  - 상품 제목
+  - 가격
+  - 상품 설명
+  - 이미지 URL 목록
+  - 판매자 UID
+- UI는 상태 변화에 반응하여 자동으로 갱신됨
+
+**의미**
+
+- 상품 목록 관리와 상품 상세 관리를 분리함으로써  
+  컨트롤러 책임이 명확해짐
+- 단일 문서 조회 패턴을 실제 코드로 구현
+
+---
+
+### 3.3 상품 이미지 표시 영역
+
+**구현 내용**
+
+- 여러 장의 상품 이미지를 슬라이드 형태로 표시
+- 좌우 스와이프 가능
+- 현재 이미지 순서를 나타내는 인디케이터 제공
+
+**의미**
+
+- 리스트 화면과 차별화된 상세 정보 제공
+- 실사용 앱과 유사한 사용자 경험 구현
+
+---
+
+### 3.4 상품 정보 영역 구성
+
+**화면에 표시되는 항목**
+
+- 상품 제목
+- 가격 (공통 가격 포맷 적용)
+- 상품 설명
+- 등록 위치
+- 등록 시간
+- 판매자 정보
+
+**특징**
+
+- Firestore에서 조회한 데이터를 그대로 화면에 바인딩
+- 데이터 로딩 전에는 로딩 화면 표시
+- 오류 발생 또는 데이터가 없는 경우 예외 처리 포함
+
+---
+
+### 3.5 채팅 시작 버튼 추가
+
+**추가된 기능**
+
+- 상품 상세 페이지 하단에 “채팅하기” 버튼 배치
+- 버튼 클릭 시 다음 정보를 기반으로 채팅 화면으로 이동
+  - 현재 로그인 사용자 UID
+  - 상품 판매자 UID
+  - 상품 ID
+
+**로직 처리**
+
+- 구매자와 판매자가 동일한 경우
+  - 채팅 버튼 비활성화 또는 숨김 처리
+- 기존 채팅방이 존재할 경우
+  - 해당 채팅방으로 바로 이동
+- 채팅방이 없을 경우
+  - 새로운 채팅방 생성 후 이동
+
+**의미**
+
+- 상품 상세 화면이 단순 조회 화면이 아닌  
+  거래로 이어지는 행동의 시작점 역할 수행
+- 이후 채팅 기능(Chapter 19)과 자연스럽게 연결됨
+
+---
+
+## 4. 전체 구조 요약
+
+- **Page**
+  - ProductDetailPage
+- **Controller**
+  - ProductDetailController
+- **역할 분리**
+  - HomeController: 상품 목록 관리
+  - ProductDetailController: 단일 상품 상세 관리
+- **Firebase 사용**
+  - Firestore 단일 문서 조회
+  - 사용자 UID를 기준으로 조건 분기
+
+---
+
+## 5. Chapter 18의 의미
+
+- 상품 등록, 상품 목록, 상품 상세 화면이 하나의 흐름으로 완성됨
+- 사용자는 다음과 같은 행동 흐름을 수행할 수 있음
+  - 홈 화면 진입
+  - 상품 선택
+  - 상세 정보 확인
+  - 채팅을 통한 거래 시도
+- 데이터 조회 방식, 화면 분리, 사용자 행동 제어를 함께 경험하는 단계
+
+---
+
+## 6. 정리
+
+Chapter 18은  
+상품 중심의 화면 구조를 완성하고  
+상세 화면을 통해 실제 거래로 이어질 수 있도록 구성한 단계이다.
+
+이 문서는 Chapter 18 브랜치의 구현 수준을  
+과제 제출용 설명 자료로 활용하기에 적합하다.
