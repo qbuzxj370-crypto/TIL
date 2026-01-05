@@ -1,0 +1,60 @@
+// 캡슐화
+class User {
+  late String _name;
+  late int _age;
+
+  User(this._name, this._age);
+
+  // getter
+  String get name => _name; 
+  int get age => _age;
+  
+  // setter
+  set name(String value) => _name = value; 
+  set age(int value) => _age = value; 
+}
+
+// 상속, 추상화
+abstract class Animal {
+  late String _name;
+  
+  Animal(this._name);
+  
+  String get name => _name;
+  
+  void eat() {
+    print("$name이(가) 식사를 하고 있습니다.");
+  }
+  
+  void makeSound();
+}
+
+class Dog extends Animal {
+  Dog(String name) : super(name);
+  
+  @override
+  void makeSound() {
+    print("$name : 왈왈!");
+  }
+}
+
+class Cat extends Animal {
+  Cat(String name) : super(name);
+  
+  @override
+  void makeSound() {
+    print("$name : 냐옹!");
+  }
+}
+
+void main() {
+  /*
+  var user = User("홍길동", 10);
+  print("${user.name}은 ${user.age}살"); // dart에서 getter메소드를 객체명.변수명으로 호출 가능
+  */
+  
+  List<Animal> animals = [Dog("바둑이"), Cat("냥이")];
+  for(var animal in animals) {
+    animal.makeSound(); // 다형성
+  }
+}

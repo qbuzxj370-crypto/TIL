@@ -1,0 +1,52 @@
+컴퓨팅 사고
+
+타이젠 os -> 삼성 개발 os
+
+플러터:
+skia 그래픽 라이브러리사용
+c/c++ 사용
+
+dart 코드(언어)를  c/c++엔진을 사용하여 네이티브 앱형식으로 만들수있음
+->유니티같은 크로스 플랫폼 개발 도구
+ 
+git:
+리비젼(버젼) 관리 플랫폼
+
+협업용
+git 기반 서비스: github, gitlab
+
+과제: TIL (today, i learned)
+
+오늘 내가 배운것을 , 오늘 복습 하는것
+깃 허브 잔디 심기: github를 푸시를 하기
+
+1주일 3,4번 활동
+
+ai 답변: 본론먼저, 상세하게 먼저
+
+개발환경 구축 능력 중요
+==========================
+git 설치 확인법: git --version
+git 설치법: 깃허브 셋업에 os에 알맞는거 설치
+
+플러터 sdk 설정법
+플러터 사이트> install Flu
+
+백신 프로그램 방화벽 끄기
+
+vs 확장프로그램 플러터 설치
+경로 복사해서 (시스템 정보)->환경변수>path 지정->예시 C:\Users\user\flutter\bin 을 추가
+powershell: 
+flutter --version,(플러터 버젼확인)
+flutter doctor(플러터 정보확인)
+
+mkdir project_b(디렉토리 생성)
+fluter create [프로젝트 명]  : 플러터 프로젝트 생성
+ flutter run : 플러터 프로젝트 실행
+-> 번호로 어디서 실행할지 선택
+
+vscode에서 디버그로 디버그 버젼 띄우기
+lib-> main.dart
+
+플러터 핫로드 기능 알아보기
+웹 어셈블리->rust(웹 어셈블리 지원 언어),
